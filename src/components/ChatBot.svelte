@@ -27,20 +27,38 @@
     }
   }
 
-  function sendMessage() {
+  async function sendMessage() {
     if (currentMessage.trim()) {
       messages = [...messages, { text: currentMessage, isUser: true }];
+      const userMessage = currentMessage;
       currentMessage = '';
       scrollToBottom();
       
-      // Add mock response - in real app, this would call an API
-      setTimeout(() => {
+      try {
+        const response = await fetch('https://iceboxdev-fastapi--8000.prod1a.defang.dev/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: userMessage
+          })
+        });
+
+        const data = await response.json();
         messages = [...messages, { 
-          text: "Thanks for your message! This is a demo chatbot. In the real version, I'll be able to help answer your questions.", 
+          text: data.response || "Sorry, there was an error processing your message.", 
           isUser: false 
         }];
         scrollToBottom();
-      }, 1000);
+      } catch (error) {
+        console.error('Error:', error);
+        messages = [...messages, { 
+          text: "Sorry, there was an error processing your message.", 
+          isUser: false 
+        }];
+        scrollToBottom();
+      }
     }
   }
 

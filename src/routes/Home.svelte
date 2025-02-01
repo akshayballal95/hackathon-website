@@ -30,27 +30,15 @@
 
 <div class="container">
   <header class="header">
-    <h1>Support in The Hague</h1>
+    <!-- <h1>Support in The Hague</h1> -->
 
-    <!-- Emergency Contact Bar -->
     <div class="emergency-bar">
-      {#each emergencyContacts as contact}
+      {#each emergencyContacts.filter(contact => !contact.whatsapp) as contact}
         <div class="emergency-item">
           <strong>{contact.name}:</strong>
-          <button
-            class="call-button"
-            on:click={() => callNumber(contact.number)}
-          >
+          <button class="call-button" on:click={() => callNumber(contact.number)}>
             📞 {contact.number}
           </button>
-          {#if contact.whatsapp}
-            <button
-              class="whatsapp-button"
-              on:click={() => openWhatsApp(contact.number)}
-            >
-              💬 WhatsApp
-            </button>
-          {/if}
         </div>
       {/each}
     </div>
@@ -67,8 +55,7 @@
       </p>
     </div>
 
-    <SearchBar on:search={handleSearch} />
-    <SearchResults results={searchResults} />
+
   </header>
 
   {#if searchResults.length === 0}
@@ -96,13 +83,13 @@
   .container {
     max-width: 1500px;
     margin: 0 auto;
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
   .header {
     text-align: center;
-    max-width: 1000px;
-    margin: 0 auto 0.6rem;
+    max-width: 800px;
+    margin: 0 auto 2rem;
   }
 
   h1 {
@@ -111,20 +98,43 @@
     margin-bottom: 0.5rem;
   }
 
-  /* Emergency Bar at the Top */
+  /* Emergency Bar styling */
   .emergency-bar {
-    position: sticky;
-    top: 0;
-    background: white; /* Red Cross color */
-    color: black;
+    background: #f8f9fa;
+    color: #212529;
     padding: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    font-size: 0.85rem;
-    z-index: 1000;
+    gap: 1.5rem;
+    max-width: 800px;
     width: 100%;
+    position: relative;
+    margin: 0 auto;
+    top: -20px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .call-button {
+    background: white;
+    color: #e31837;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 140px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .call-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   /* Emergency Item Layout */
@@ -135,25 +145,6 @@
   }
 
   /* Emergency Buttons */
-  .call-button,
-  .whatsapp-button {
-    background: white;
-    color: #e31837;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    min-width: 150px;
-  }
-
-  .call-button:hover {
-    background: #fff3f4;
-  }
-
   .whatsapp-button {
     color: #25d366;
   }
@@ -183,7 +174,12 @@
 
   /* Introductory Text */
   .intro {
-    margin: 1rem 0; /* Add space above and below the intro text */
+    margin: 0.5rem 0;
+  }
+
+  p.large-text {
+    margin: 0.5rem 0;
+    line-height: 1.4;
   }
 
   /* Search Bar Component */
@@ -271,9 +267,9 @@
   /* Categories & Cards */
   .categories {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-    padding: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
   }
 
   .category-link {
@@ -283,48 +279,51 @@
 
   .category-card {
     background: white;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    height: 150px;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    height: 160px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
+  .category-card:hover {
+    border-color: #e31837;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
   .card-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .category-card:hover {
-    border-color: #e31837;
-    transform: translateY(-3px);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   h3 {
-    color: #333;
-    font-size: 1rem;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-weight: 600;
     margin: 0;
   }
 
   p {
-    color: #555;
+    color: #4a4a4a;
     margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.4;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   .click-hint {
     display: block;
-    margin-top: 0.6rem;
+    margin-top: 0.8rem;
     color: #e31837;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     text-align: right;
+    font-weight: 500;
   }
 
   @media (max-width: 768px) {

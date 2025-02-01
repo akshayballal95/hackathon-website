@@ -34,7 +34,7 @@
       type="text"
       bind:value={searchQuery}
       on:input={handleInput}
-      placeholder="Type your question or what you need help with..."
+      placeholder="What do you need help with?"
       aria-label="Search"
     />
     {#if searchQuery}

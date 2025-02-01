@@ -20,7 +20,7 @@ fetchResources();
 
 export const categories: Category[] = [
   {
-    id: 'where-to-go',
+    id: 'whereToGo',
     title: 'Where to go first',
     icon: '👣',
     description: 'New in The Hague? Start here for basic help'
