@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { categories, emergencyContacts } from "../lib/data";
+  import { categories, emergencyContacts, resources, fetchResources } from "../lib/data";
   import { Link } from "svelte-routing";
   import SearchBar from "../components/SearchBar.svelte";
   import SearchResults from "../components/SearchResults.svelte";
   import type { SearchResult } from "../lib/search";
   import { onMount } from "svelte";
   import { sanityClient } from "../sanityClient";
+  import type { Resource } from "../lib/types";
   let searchResults: SearchResult[] = [];
+  let loadedResources: Resource[] = [];
 
   function handleSearch(event: CustomEvent<{ results: SearchResult[] }>) {
     searchResults = event.detail.results;
@@ -20,13 +22,10 @@
     window.location.href = `https://wa.me/${number.replace(/[^0-9]/g, "")}`;
   }
 
-  // onMount(async () => {
-  //   const resources = await sanityClient
-  //     .fetch('*[_type == "shelter"]')
-  //     .then((resources) => {
-  //       console.log(resources);
-  //     });
-  // });
+  onMount(async () => {
+    await fetchResources();
+    loadedResources = resources;
+  });
 </script>
 
 <div class="container">

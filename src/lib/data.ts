@@ -1,8 +1,23 @@
 import type { Category, Resource } from './types';
 import { sanityClient } from '../sanityClient';
 
-export const resources:Resource[] = await sanityClient.fetch('*') as Resource[];
-console.log(resources);
+// Initialize empty resources array
+export let resources: Resource[] = [];
+
+// Create a function to fetch resources
+export async function fetchResources() {
+  try {
+    resources = await sanityClient.fetch('*');
+    console.log(resources);
+  } catch (error) {
+    console.error('Error fetching resources:', error);
+    resources = []; // Set to empty array if fetch fails
+  }
+}
+
+// Call the fetch function immediately
+fetchResources();
+
 export const categories: Category[] = [
   {
     id: 'where-to-go',
