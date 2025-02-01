@@ -26,13 +26,16 @@
   resources.subscribe(currentResources => {
     if (subId) {
       categoryResources = currentResources.filter(resource => 
-        resource._type === id && resource.shelterType === subId
+        resource._type === subId
       );
     } else {
       categoryResources = currentResources.filter(resource => 
         resource._type === id
       );
     }
+    if (id === 'shelter') {
+    categoryResources = currentResources.filter(resource => resource._type === 'shelter' && resource.shelterType === subId);
+  }
   });
 
   onMount(async () => {
@@ -103,9 +106,12 @@
     {#if loading}
       <div class="loading">Loading...</div>
     {:else}
-      {#each categoryResources as resource}
-        <div class="resource-card">
-          <div class="title-section">
+      {#if categoryResources.length === 0}
+        <div class="loading">No resources found for this category. Check back later for more information.</div>
+      {:else}
+        {#each categoryResources as resource}
+          <div class="resource-card">
+            <div class="title-section">
             {#if resource.logo}
               <img src={urlFor(resource.logo).url()} alt={resource.name} />
             {/if}
@@ -237,6 +243,7 @@
         {/if}
       {/each}
     {/if}
+  {/if}
   {/if}
 </div>
 

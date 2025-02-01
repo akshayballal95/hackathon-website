@@ -56,7 +56,7 @@ export const categories: Category[] = [
     ]
   },
   {
-    id: 'food-clothing',
+    id: 'foodAndClothing',
     title: 'Food & Clothes',
     icon: '🥗',
     description: 'Free food and clothing'
@@ -135,7 +135,25 @@ export const categories: Category[] = [
     id: 'women',
     title: 'Help for Women',
     icon: '👩',
-    description: 'Special support for women'
+    description: 'Special support for women',
+    subcategories: [
+      {
+        id: 'pregnancyCare',
+        title: 'Pregnancy Care'
+      },
+      {
+        id: 'birthControlAndMenstruation',
+        title: 'Birth Control & Menstruation'
+      },
+      {
+        id: "organizationsThatCanHelp",
+        title: 'Organizations that can help'
+      },
+      {
+        id: "abortion",
+        title: 'Abortion'
+      }
+    ]
   },
   {
     id: 'children',
@@ -153,7 +171,21 @@ export const categories: Category[] = [
     id: 'asylum-return',
     title: 'Asylum & Return',
     icon: '🔄',
-    description: 'Here you can find information about asylum procedure and return.'
+    description: 'Here you can find information about asylum procedure and return.',
+    subcategories: [
+      {
+        id: "firstAsylumRequest",
+        title: "Making your first Asylum Request"
+      },
+      {
+        id: "afterRejection",
+        title: "What to do after rejection"
+      },
+      {
+        id: "voluntaryReturn",
+        title: "Voluntary Return"
+      }
+    ]
   },
   {
     id: 'courses',
