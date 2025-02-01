@@ -32,6 +32,7 @@ export interface Resource {
     hours: string;
   }[];
   requirements?: string;
+  shelterType?: string;
 
 }
 // End

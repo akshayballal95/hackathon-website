@@ -289,6 +289,17 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     border: 2px solid transparent;
     transition: all 0.2s;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   .category-card:hover {

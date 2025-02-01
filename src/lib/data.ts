@@ -11,16 +11,28 @@ export const categories: Category[] = [
     description: 'New in The Hague? Start here for basic help'
   },
   {
-    id: 'health',
-    title: 'Health & Wellbeing',
-    icon: '👨‍⚕️',
-    description: 'Medical care when you are sick'
-  },
-  {
-    id: 'dentist',
-    title: 'Dentist',
-    icon: '🦷',
-    description: 'Help for tooth pain'
+    id: 'safety',
+    title: 'Safety & Protection',
+    icon: '🛡️',
+    description: 'Access to emergency service and protection from violence, abuse, and work exploitation.',
+    subcategories: [
+      {
+        id: 'domesticViolence',
+        title: 'Domestic Violence'
+      },
+      {
+        id: 'criminalExploitation',
+        title: 'Criminal Exploitation'
+      },
+      {
+        id: "sexualExploitation",
+        title: "Sexual Exploitation"
+      },
+      {
+        id: "labourExploitation",
+        title: "Labour Exploitation"
+      }
+    ]
   },
   {
     id: 'food-clothing',
@@ -35,14 +47,62 @@ export const categories: Category[] = [
     description: 'Find a place to sleep',
     subcategories: [
       {
-        id: 'day-shelter',
+        id: 'day',
         title: 'Day Shelter',
       },
       {
-        id: 'night-shelter',
+        id: 'night',
         title: 'Night Shelter',
       },
     ],
+  },
+  {
+    id: 'health',
+    title: 'Health & Wellbeing',
+    icon: '👨‍⚕️',
+    description: 'Medical care when you are sick',
+    subcategories: [
+      {
+        id: 'healthAndWellbeing',
+        title: 'Documents explaining healthcare'
+      },
+      {
+        id: 'emergencyLines',
+        title: 'Emergency lines',
+      },
+      {
+        id: 'doctors',
+        title: "Doctor"
+      },
+      {
+        id: 'medication',
+        title: 'Medication'
+      },
+      {
+        id: 'sexualHealth',
+        title: 'Sexual Health'
+      },
+      {
+        id: 'mentalWellbeing',
+        title: 'Mental Health'
+      },
+      {
+        id: 'hygiene',
+        title: 'Hygiene'
+      },
+    ],
+  },
+  {
+    id: 'dentist',
+    title: 'Dentist',
+    icon: '🦷',
+    description: 'Help for tooth pain'
+  },
+  {
+    id: 'work',
+    title: 'Work',
+    icon: '💼',
+    description: 'When you have a job you have rights, also if you are undocumented.'
   },
   {
     id: 'legal',
@@ -63,33 +123,21 @@ export const categories: Category[] = [
     description: 'Support for young people'
   },
   {
-    id: 'safety',
-    title: 'Safety & Protection',
-    icon: '👶',
-    description: 'Access to emergency service and protection from violence, abuse, and work exploitation.'
-  },
-  {
-    id: 'work',
-    title: 'Safety & Protection',
-    icon: '👶',
-    description: 'When you have a job you have rights, also if you are undocumented.'
+    id: 'find-family',
+    title: 'Find Missing Relatives',
+    icon: '🔍',
+    description: 'The Red Cross can help you to search for missing relatives in other countries and get in touch with them.'
   },
   {
     id: 'asylum-return',
     title: 'Asylum & Return',
-    icon: '👶',
+    icon: '🔄',
     description: 'Here you can find information about asylum procedure and return.'
-  },
-  {
-    id: 'find-family',
-    title: 'Find Missing Relatives',
-    icon: '👶',
-    description: 'The Red Cross can help you to search for missing relatives in other countries and get in touch with them.'
   },
   {
     id: 'courses',
     title: 'Courses & Activities',
-    icon: '👶',
+    icon: '👥',
     description: 'Organisations offer (language) courses and activities that you can follow.'
   },
   {
@@ -102,11 +150,8 @@ export const categories: Category[] = [
     id: 'helpdesk',
     title: 'Helpdesk and Social Support',
     icon: '🛈',
-    description: 'Give us feedback on this website! For example if you miss information or information is incorrect.'
+    description: 'Information about the support organizations you can contact for help or social support.'
   },
-  
-  
-  
 ];
 
 // // Update the resources with more direct language and clearer information

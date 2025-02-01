@@ -3,6 +3,7 @@
   import Home from "./routes/Home.svelte";
   import Category from "./routes/Category.svelte";
   import Resource from "./routes/Resource.svelte";
+  import ChatBot from "./components/ChatBot.svelte";
   
   export let url = "";
 </script>
@@ -19,8 +20,11 @@
   <main>
     <Route path="/" component={Home} />
     <Route path="/category/:id" component={Category} />
+    <Route path="/category/:id/:subId" component={Category} />
     <Route path="/resource/:categoryId/:id" component={Resource} />
   </main>
+
+  <ChatBot />
 </Router>
 
 <style>
