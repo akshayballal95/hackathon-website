@@ -1,17 +1,23 @@
 import type { Category, Resource } from './types';
 import { sanityClient } from '../sanityClient';
+import { writable } from 'svelte/store';
+
+// Create a Svelte store for resources
+export const resources = writable<Resource[]>([]);
 
 // Initialize empty resources array
-export let resources: Resource[] = [];
+// export let resources: Resource[] = [];
 
 // Create a function to fetch resources
 export async function fetchResources() {
   try {
-    resources = await sanityClient.fetch('*');
-    console.log(resources);
+    const fetchedResources = await sanityClient.fetch('*');
+    // resources = fetchedResources;
+    resources.set(fetchedResources);
+    return fetchedResources;
   } catch (error) {
     console.error('Error fetching resources:', error);
-    resources = []; // Set to empty array if fetch fails
+    return [];
   }
 }
 

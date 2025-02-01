@@ -84,14 +84,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1rem;
     position: relative;
+    padding: 0.5rem 1rem;
   }
 
   .logo {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #e31837;
+    white-space: nowrap;
   }
 
   main {
@@ -143,10 +145,10 @@
   } 
 
   .search-container {
-    margin-left:auto;
+    margin-left: auto;
     max-width: 400px;
     width: 100%;
-    margin-top: 25px;
+    min-width: 200px;
   }
   .results-wrapper {
     position: absolute;
@@ -155,6 +157,18 @@
     right:0;
     background: white;
     box-shadow: 0 4px 6px rgba(0, 0,0,0.1);
+  }
+
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+
+    .search-container {
+      margin: 0.5rem 0;
+    }
   }
 
 </style>

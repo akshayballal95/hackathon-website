@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { resources, categories } from '../lib/data';
+  import { resources, categories, fetchResources } from '../lib/data';
   import { Link } from "svelte-routing";
   import { writable } from 'svelte/store';
   import { sanityClient } from '../sanityClient';
   import imageUrlBuilder from '@sanity/image-url';
   import { onMount } from 'svelte';
   import { marked } from 'marked';
+  import type { Resource } from '../lib/types';
 
   // Initialize the image URL builder
   const builder = imageUrlBuilder(sanityClient);
@@ -18,17 +19,29 @@
   export let id: string;
   export let subId: string | undefined = undefined;
   
-  $: categoryResources = resources.filter(resource => {
+  let loading = true;
+  let categoryResources: Resource[] = [];
+  
+  // Subscribe to the resources store
+  resources.subscribe(currentResources => {
     if (subId) {
-      return resource._type === subId;
+      categoryResources = currentResources.filter(resource => 
+        resource._type === id && resource.shelterType === subId
+      );
+    } else {
+      categoryResources = currentResources.filter(resource => 
+        resource._type === id
+      );
     }
-    return resource._type === id;
-  });   
+  });
 
-  $: if (id === 'shelter') {
-    console.log(resources.filter(resource => resource._type === 'shelter'));
-    categoryResources = resources.filter(resource => resource._type === 'shelter' && resource.shelterType === subId);
-  }
+  onMount(async () => {
+    loading = true;
+    if (resources.length === 0) {
+      await fetchResources();
+    }
+    loading = false;
+  });
 
   const openSections = writable<Record<string, boolean>>({});
 
@@ -87,139 +100,143 @@
       </div>
     </div>
   {:else}
-    {#each categoryResources as resource}
-      <div class="resource-card">
-        <div class="title-section">
-          {#if resource.logo}
-            <img src={urlFor(resource.logo).url()} alt={resource.name} />
+    {#if loading}
+      <div class="loading">Loading...</div>
+    {:else}
+      {#each categoryResources as resource}
+        <div class="resource-card">
+          <div class="title-section">
+            {#if resource.logo}
+              <img src={urlFor(resource.logo).url()} alt={resource.name} />
+            {/if}
+            <h2>{resource.name}</h2>
+          </div>
+
+          <p class="description">{@html marked(formatBulletPoints(resource.description))}</p>
+
+          <!-- Dropdown for Shelter Subcategories -->
+          {#if resource.id == 'shelter'}
+            <div class="dropdown">
+              <button class="dropdown-button" on:click={() => toggleSection(resource.id, 'subcategories')}>
+                Subcategories
+                <span class="toggle-icon">{$openSections[`${resource.id}-subcategories`] ? '−' : '+'}</span>
+              </button>
+              {#if $openSections[`${resource.id}-subcategories`]}
+                <div class="dropdown-content">
+                  <Link to="/day-shelter" class="dropdown-link">Day Shelter</Link>
+                  <Link to="/night-shelter" class="dropdown-link">Night Shelter</Link>
+                </div>
+              {/if}
+            </div>
           {/if}
-          <h2>{resource.name}</h2>
+
+          {#if resource.operatingHours}
+            <div class="accordion-section">
+              <button 
+                class="accordion-header" 
+                on:click={() => toggleSection(resource._id, 'hours')}
+                aria-expanded={$openSections[`${resource._id}-hours`]}>
+                <span class="section-title">Opening Hours:</span>
+                <span class="toggle-icon">{$openSections[`${resource._id}-hours`] ? '−' : '+'}</span>
+              </button>
+              {#if $openSections[`${resource._id}-hours`]}
+                <div class="accordion-content">
+                  {#each resource.operatingHours as item}
+                    <div class="detail-item">
+                      <strong>{item.label}:</strong> {item.hours}
+                    </div>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
+
+
+          {#if resource.phoneNumbers || resource.emergencyContacts || resource.email || resource.website || resource.address}
+            <div class="accordion-section">
+              <button 
+                class="accordion-header" 
+                on:click={() => toggleSection(resource._id, 'contact')}
+                aria-expanded={$openSections[`${resource._id}-contact`]}>
+                <span class="section-title">Contact:</span>
+                <span class="toggle-icon">{$openSections[`${resource._id}-contact`] ? '−' : '+'}</span>
+              </button>
+              {#if $openSections[`${resource._id}-contact`]}
+                <div class="accordion-content">
+                  {#if resource.phoneNumbers}
+                    <div class="detail-item">
+                      <strong>Phone:</strong> 
+                      {#each resource.phoneNumbers || [] as phone}
+                        <a href={`tel:${phone.number}`}>{phone.number}</a>
+                      {/each} 
+                    </div>
+                  {/if}
+                  {#if resource.emergencyContacts}
+                    <div class="detail-item">
+                      <strong>Emergency Contacts:</strong> {resource.emergencyContacts.join(', ')}
+                    </div>
+                  {/if}
+                  {#if resource.email}
+                    <div class="detail-item">
+                      <strong>Email:</strong> {resource.email}
+                    </div>
+                  {/if}
+                  {#if resource.website}
+                    <div class="detail-item">
+                      <strong>Website:</strong> {resource.website}
+                    </div>
+                  {/if}
+                  {#if resource.address}
+                    <div class="detail-item">
+                      <strong>Address:</strong> {resource.address.street}
+                    </div>
+                  {/if}
+                </div>
+              {/if}
+
+            </div>
+          {/if}
+
+          {#if resource.needToKnow}
+            <div class="accordion-section">
+              <button 
+                class="accordion-header" 
+                on:click={() => toggleSection(resource.id, 'notes')}
+                aria-expanded={$openSections[`${resource.id}-notes`]}>
+                <span class="section-title">What you need to know:</span>
+                <span class="toggle-icon">{$openSections[`${resource.id}-notes`] ? '−' : '+'}</span>
+              </button>
+              {#if $openSections[`${resource.id}-notes`]}
+                <div class="accordion-content">
+                  {@html marked(formatBulletPoints(resource.needToKnow))}
+                </div>
+              {/if}
+            </div>
+          {/if}
+
+          <div class="meta">
+            <span>Source: {resource.source}</span>
+            <span class="date">Last updated: {new Date(resource._updatedAt).toLocaleString()}</span>
+          </div>
         </div>
-
-        <p class="description">{@html marked(formatBulletPoints(resource.description))}</p>
-
-        <!-- Dropdown for Shelter Subcategories -->
-        {#if resource.id == 'shelter'}
-          <div class="dropdown">
-            <button class="dropdown-button" on:click={() => toggleSection(resource.id, 'subcategories')}>
-              Subcategories
-              <span class="toggle-icon">{$openSections[`${resource.id}-subcategories`] ? '−' : '+'}</span>
-            </button>
-            {#if $openSections[`${resource.id}-subcategories`]}
-              <div class="dropdown-content">
-                <Link to="/day-shelter" class="dropdown-link">Day Shelter</Link>
-                <Link to="/night-shelter" class="dropdown-link">Night Shelter</Link>
-              </div>
-            {/if}
+        
+        {#if resource.details?.formEmbedUrl}
+          <div class="form-container">
+            <iframe
+              src={resource.details.formEmbedUrl}
+              width="100%"
+              height="800px"
+              frameborder="0"
+              marginheight="0"
+              marginwidth="0"
+              title="Feedback Form"
+            >
+              Loading...
+            </iframe>
           </div>
         {/if}
-
-        {#if resource.operatingHours}
-          <div class="accordion-section">
-            <button 
-              class="accordion-header" 
-              on:click={() => toggleSection(resource._id, 'hours')}
-              aria-expanded={$openSections[`${resource._id}-hours`]}>
-              <span class="section-title">Opening Hours:</span>
-              <span class="toggle-icon">{$openSections[`${resource._id}-hours`] ? '−' : '+'}</span>
-            </button>
-            {#if $openSections[`${resource._id}-hours`]}
-              <div class="accordion-content">
-                {#each resource.operatingHours as item}
-                  <div class="detail-item">
-                    <strong>{item.label}:</strong> {item.hours}
-                  </div>
-                {/each}
-              </div>
-            {/if}
-          </div>
-        {/if}
-
-
-        {#if resource.phoneNumbers || resource.emergencyContacts || resource.email || resource.website || resource.address}
-          <div class="accordion-section">
-            <button 
-              class="accordion-header" 
-              on:click={() => toggleSection(resource._id, 'contact')}
-              aria-expanded={$openSections[`${resource._id}-contact`]}>
-              <span class="section-title">Contact:</span>
-              <span class="toggle-icon">{$openSections[`${resource._id}-contact`] ? '−' : '+'}</span>
-            </button>
-            {#if $openSections[`${resource._id}-contact`]}
-              <div class="accordion-content">
-                {#if resource.phoneNumbers}
-                  <div class="detail-item">
-                    <strong>Phone:</strong> 
-                    {#each resource.phoneNumbers || [] as phone}
-                      <a href={`tel:${phone.number}`}>{phone.number}</a>
-                    {/each} 
-                  </div>
-                {/if}
-                {#if resource.emergencyContacts}
-                  <div class="detail-item">
-                    <strong>Emergency Contacts:</strong> {resource.emergencyContacts.join(', ')}
-                  </div>
-                {/if}
-                {#if resource.email}
-                  <div class="detail-item">
-                    <strong>Email:</strong> {resource.email}
-                  </div>
-                {/if}
-                {#if resource.website}
-                  <div class="detail-item">
-                    <strong>Website:</strong> {resource.website}
-                  </div>
-                {/if}
-                {#if resource.address}
-                  <div class="detail-item">
-                    <strong>Address:</strong> {resource.address.street}
-                  </div>
-                {/if}
-              </div>
-            {/if}
-
-          </div>
-        {/if}
-
-        {#if resource.needToKnow}
-          <div class="accordion-section">
-            <button 
-              class="accordion-header" 
-              on:click={() => toggleSection(resource.id, 'notes')}
-              aria-expanded={$openSections[`${resource.id}-notes`]}>
-              <span class="section-title">What you need to know:</span>
-              <span class="toggle-icon">{$openSections[`${resource.id}-notes`] ? '−' : '+'}</span>
-            </button>
-            {#if $openSections[`${resource.id}-notes`]}
-              <div class="accordion-content">
-                {@html marked(formatBulletPoints(resource.needToKnow))}
-              </div>
-            {/if}
-          </div>
-        {/if}
-
-        <div class="meta">
-          <span>Source: {resource.source}</span>
-          <span class="date">Last updated: {new Date(resource._updatedAt).toLocaleString()}</span>
-        </div>
-      </div>
-      
-      {#if resource.details?.formEmbedUrl}
-        <div class="form-container">
-          <iframe
-            src={resource.details.formEmbedUrl}
-            width="100%"
-            height="800px"
-            frameborder="0"
-            marginheight="0"
-            marginwidth="0"
-            title="Feedback Form"
-          >
-            Loading...
-          </iframe>
-        </div>
-      {/if}
-    {/each}
+      {/each}
+    {/if}
   {/if}
 </div>
 
@@ -450,5 +467,11 @@
   
   :global(.description li) {
     margin: 0.5rem 0;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
   }
 </style>

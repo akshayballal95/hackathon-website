@@ -102,11 +102,12 @@
   .emergency-bar {
     background: #f8f9fa;
     color: #212529;
-    padding: 0.5rem;
+    padding: 0.75rem;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     max-width: 800px;
     width: 100%;
     position: relative;
@@ -157,13 +158,14 @@
   @media (max-width: 768px) {
     .emergency-bar {
       flex-direction: column;
-      align-items: flex-start;
-      padding: 0.8rem;
+      padding: 1rem;
+      gap: 0.75rem;
+      top: 0;
     }
 
     .emergency-item {
-      flex-direction: column;
-      align-items: flex-start;
+      width: 100%;
+      justify-content: center;
     }
 
     .call-button,

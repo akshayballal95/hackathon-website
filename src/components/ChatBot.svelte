@@ -46,8 +46,9 @@
         });
 
         const data = await response.json();
+        console.log(data);
         messages = [...messages, { 
-          text: data.response || "Sorry, there was an error processing your message.", 
+          text: data || "Sorry, there was an error processing your message.", 
           isUser: false 
         }];
         scrollToBottom();
