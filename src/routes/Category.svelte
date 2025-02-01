@@ -215,7 +215,7 @@
           {/if}
 
           <div class="meta">
-            <span>Source: {resource.source}</span>
+            <!-- <span>Source: {resource.source}</span> -->
             <span class="date">Last updated: {new Date(resource._updatedAt).toLocaleString()}</span>
           </div>
         </div>
